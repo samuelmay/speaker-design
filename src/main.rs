@@ -94,8 +94,16 @@ impl Component for App {
         html! {
             <div>
                 <canvas ref={self.node_ref.clone()} width="500" height="400" />
+                <table>
+                    <tr>{ "Box width" }<td></td><td>{self.cabinet.box_width}</td></tr>
+                    <tr>{ "Box height" }<td></td><td>{self.cabinet.box_height}</td></tr>
+                    <tr>{ "Box length" }<td></td><td>{self.cabinet.box_length}</td></tr>
+                    <tr>{ "Port length" }<td></td><td>{self.cabinet.port_length}</td></tr>
+                    <tr>{ "Port external diameter" }<td></td><td>{self.cabinet.port_external_diameter}</td></tr>
+                    <tr>{ "Port minimum diameter" }<td></td><td>{self.cabinet.port_min_diameter()}</td></tr>
+                    <tr>{ "Frequency" }<td></td><td>{self.cabinet.resonant_frequency()}</td></tr>
+                </table>
                 <p><button onclick={link.callback(|_| Msg::AddOne)}>{ "+10" }</button></p>
-                <p><span>{self.cabinet.resonant_frequency()}</span></p>
             </div>
         }
     }
