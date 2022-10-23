@@ -38,7 +38,7 @@ jobs:
          # Optional version of trunk to install(eg. 'v0.8.1', 'latest')
          version: 'latest'
     - name: Build
-      run: trunk build
+      run: trunk build --public-url ${{ github.event.repository.name }}
     - name: Setup Pages
       uses: actions/configure-pages@v2
     - name: Upload artifact
