@@ -5,7 +5,11 @@ use wasm_bindgen::{JsValue};
 use std::f64::consts::PI;
 
 enum Msg {
-    AddOne,
+    ChangeVolume(i32),
+    ChangeRadius(i32),
+    ChangeLength(i32),
+    ChangeHeight(i32),
+    ChangeWidth(i32),
 }
 
 struct App {
@@ -80,10 +84,26 @@ impl Component for App {
     
     fn update(&mut self, ctx: &Context<Self>, msg: Self::Message) -> bool {
        match msg {
-           Msg::AddOne => {
-               self.cabinet.port_external_height += 10;
+           Msg::ChangeHeight(height) => {
+               self.cabinet.port_external_height = height;
                true
-           }
+           },
+           Msg::ChangeWidth(width)=> {
+               self.cabinet.port_external_width = width;
+               true
+           },
+           Msg::ChangeLength(length)=> {
+               self.cabinet.port_external_width = length;
+               true
+           },
+           Msg::ChangeRadius(radius)=> {
+               self.cabinet.port_flare_radius = radius;
+               true
+           },
+           Msg::ChangeVolume(volume)=> {
+               self.cabinet.box_volume = volume;
+               true
+           },
        } 
     }
     
@@ -92,19 +112,36 @@ impl Component for App {
         
         let canvas_width = self.cabinet.port_length + self.cabinet.port_external_width + 30;
         let canvas_height = self.cabinet.port_external_height + 20;
+        
+        let on_volume_input = link.batch_callback(|e:InputEvent| {
+            match e.data() {
+                Some(val) => {
+                    match val.parse::<i32>() {
+                        Ok(volume) => Some(Msg::ChangeVolume(volume)),
+                        Err(_) => None,
+                    }
+                },
+                None => None
+            }
+
+        });
 
         html! {
             <div>
                 <canvas ref={self.node_ref.clone()} width={canvas_width.to_string()} height={canvas_height.to_string()} />
                 <table>
-                    <tr>{ "Box volume" }<td></td><td>{self.cabinet.box_volume}</td></tr>
+                    <tr>{ "Box volume" }<td></td><td>
+                        <input
+                            type="number"
+                            value={self.cabinet.box_volume.to_string()}
+                            oninput={on_volume_input} />
+                    </td></tr>
                     <tr>{ "Port length" }<td></td><td>{self.cabinet.port_length}</td></tr>
                     <tr>{ "Port external height" }<td></td><td>{self.cabinet.port_external_height}</td></tr>
                     <tr>{ "Port external width" }<td></td><td>{self.cabinet.port_external_width}</td></tr>
                     <tr>{ "Port minimum diameter" }<td></td><td>{self.cabinet.port_min_diameter()}</td></tr>
                     <tr>{ "Frequency" }<td></td><td>{self.cabinet.resonant_frequency()}</td></tr>
                 </table>
-                <p><button onclick={link.callback(|_| Msg::AddOne)}>{ "+10" }</button></p>
             </div>
         }
     }
