@@ -1,6 +1,6 @@
 use wasm_bindgen::JsCast;
 use yew::prelude::*;
-use web_sys::{CanvasRenderingContext2d, HtmlCanvasElement};
+use web_sys::{CanvasRenderingContext2d, HtmlCanvasElement, HtmlInputElement};
 use wasm_bindgen::{JsValue};
 use std::f64::consts::PI;
 
@@ -113,17 +113,12 @@ impl Component for App {
         let canvas_width = self.cabinet.port_length + self.cabinet.port_external_width + 30;
         let canvas_height = self.cabinet.port_external_height + 20;
         
-        let on_volume_input = link.batch_callback(|e:InputEvent| {
-            match e.data() {
-                Some(val) => {
-                    match val.parse::<i32>() {
-                        Ok(volume) => Some(Msg::ChangeVolume(volume)),
-                        Err(_) => None,
-                    }
-                },
-                None => None
+        let on_volume_change = link.batch_callback(|e:Event| {
+            let input: HtmlInputElement = e.target_unchecked_into();
+            match input.value().parse::<i32>() {
+                Ok(volume) => Some(Msg::ChangeVolume(volume)),
+                Err(_) => None,
             }
-
         });
 
         html! {
@@ -132,9 +127,9 @@ impl Component for App {
                 <table>
                     <tr>{ "Box volume" }<td></td><td>
                         <input
-                            type="number"
+                            type="text"
                             value={self.cabinet.box_volume.to_string()}
-                            oninput={on_volume_input} />
+                            onchange={on_volume_change} />
                     </td></tr>
                     <tr>{ "Port length" }<td></td><td>{self.cabinet.port_length}</td></tr>
                     <tr>{ "Port external height" }<td></td><td>{self.cabinet.port_external_height}</td></tr>
