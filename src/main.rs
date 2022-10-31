@@ -64,6 +64,14 @@ impl Cabinet {
 
 }
 
+fn parse_to_message<M>(e: Event, constructor: M) -> Option<Msg> where M: Fn(i32) -> Msg {
+    let input: HtmlInputElement = e.target_unchecked_into();
+    match input.value().parse::<i32>() {
+        Ok(volume) => Some((constructor)(volume)),
+        Err(_) => None,
+    }
+}
+
 impl Component for App {
     type Message = Msg;
     type Properties = ();
@@ -93,7 +101,7 @@ impl Component for App {
                true
            },
            Msg::ChangeLength(length)=> {
-               self.cabinet.port_external_width = length;
+               self.cabinet.port_length = length;
                true
            },
            Msg::ChangeRadius(radius)=> {
@@ -107,20 +115,14 @@ impl Component for App {
        } 
     }
     
+    
+    
     fn view(&self, ctx: &Context<Self>) -> Html {
         let link = ctx.link();
         
         let canvas_width = self.cabinet.port_length + self.cabinet.port_external_width + 30;
         let canvas_height = self.cabinet.port_external_height + 20;
         
-        let on_volume_change = link.batch_callback(|e:Event| {
-            let input: HtmlInputElement = e.target_unchecked_into();
-            match input.value().parse::<i32>() {
-                Ok(volume) => Some(Msg::ChangeVolume(volume)),
-                Err(_) => None,
-            }
-        });
-
         html! {
             <div>
                 <canvas ref={self.node_ref.clone()} width={canvas_width.to_string()} height={canvas_height.to_string()} />
@@ -129,9 +131,14 @@ impl Component for App {
                         <input
                             type="text"
                             value={self.cabinet.box_volume.to_string()}
-                            onchange={on_volume_change} />
+                            onchange={link.batch_callback(|e:Event| { parse_to_message(e, Msg::ChangeVolume) })} /> {" Litres"}
                     </td></tr>
-                    <tr>{ "Port length" }<td></td><td>{self.cabinet.port_length}</td></tr>
+                    <tr>{ "Port length" }<td></td><td>
+                        <input
+                            type="text"
+                            value={self.cabinet.port_length.to_string()}
+                            onchange={link.batch_callback(|e:Event| { parse_to_message(e, Msg::ChangeLength) })} /> {" milimetres"}
+                    </td></tr>
                     <tr>{ "Port external height" }<td></td><td>{self.cabinet.port_external_height}</td></tr>
                     <tr>{ "Port external width" }<td></td><td>{self.cabinet.port_external_width}</td></tr>
                     <tr>{ "Port minimum diameter" }<td></td><td>{self.cabinet.port_min_diameter()}</td></tr>
