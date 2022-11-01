@@ -182,6 +182,7 @@ impl Component for App {
         let scale_factor: f64 = 1.0;
        
         let port_height_scaled = f64::from(self.cabinet.port_external_height) / scale_factor;
+        let port_width_scaled = f64::from(self.cabinet.port_external_width) / scale_factor;
         let square_mid = port_height_scaled/2.0 + border;
         let min_radius_scaled = self.cabinet.port_min_diameter() / (2.0*scale_factor);
         let port_length_scaled: f64 = f64::from(self.cabinet.port_length) / (2.0*scale_factor); 
@@ -189,26 +190,43 @@ impl Component for App {
         let alpha = self.cabinet.port_flare_arc_start();
 
         ctx2d.begin_path();
+        ctx2d.set_fill_style(&JsValue::from("brown"));
         ctx2d.set_stroke_style(&JsValue::from("brown"));
         ctx2d.arc(
             border + port_length_scaled,
-            border + square_mid - min_radius_scaled - flair_radius_scaled,
+            square_mid - min_radius_scaled - flair_radius_scaled,
             flair_radius_scaled,
             alpha,
             PI - alpha
         ).unwrap();
-        ctx2d.stroke();
+        ctx2d.close_path();
+        ctx2d.fill();
 
         ctx2d.begin_path();
         ctx2d.arc(
             border + port_length_scaled,
-            border + square_mid + min_radius_scaled + flair_radius_scaled,
+            square_mid + min_radius_scaled + flair_radius_scaled,
             flair_radius_scaled,
             PI + alpha,
             2.0*PI - alpha
         ).unwrap();
-        ctx2d.set_stroke_style(&JsValue::from("brown"));
+        ctx2d.close_path();
+        ctx2d.fill();
+        
+        let far_border = 2.0*border + 2.0*port_length_scaled;
+        ctx2d.begin_path();
+        ctx2d.move_to(far_border, border);
+        ctx2d.line_to(far_border, border + port_height_scaled);
+        ctx2d.move_to(far_border + port_width_scaled, border + port_height_scaled);
+        ctx2d.line_to(far_border + port_width_scaled, border);
+        ctx2d.close_path();
         ctx2d.stroke();
+
+        ctx2d.set_fill_style(&JsValue::from("brown"));
+        
+        let front_view_box_height = port_height_scaled/2.0-min_radius_scaled;
+        ctx2d.fill_rect(far_border, border, port_width_scaled, front_view_box_height);
+        ctx2d.fill_rect(far_border, border + port_height_scaled - front_view_box_height, port_width_scaled, front_view_box_height);
        
     }
 }
