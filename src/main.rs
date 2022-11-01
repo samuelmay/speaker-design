@@ -127,22 +127,39 @@ impl Component for App {
             <div>
                 <canvas ref={self.node_ref.clone()} width={canvas_width.to_string()} height={canvas_height.to_string()} />
                 <table>
-                    <tr>{ "Box volume" }<td></td><td>
+                    <tr><td>{ "Box volume" }</td><td>
                         <input
                             type="text"
                             value={self.cabinet.box_volume.to_string()}
-                            onchange={link.batch_callback(|e:Event| { parse_to_message(e, Msg::ChangeVolume) })} /> {" Litres"}
+                            onchange={link.batch_callback(|e:Event| { parse_to_message(e, Msg::ChangeVolume) })} /> {" litres"}
                     </td></tr>
-                    <tr>{ "Port length" }<td></td><td>
+                    <tr><td>{ "Port length" }</td><td>
                         <input
                             type="text"
                             value={self.cabinet.port_length.to_string()}
                             onchange={link.batch_callback(|e:Event| { parse_to_message(e, Msg::ChangeLength) })} /> {" milimetres"}
                     </td></tr>
-                    <tr>{ "Port external height" }<td></td><td>{self.cabinet.port_external_height}</td></tr>
-                    <tr>{ "Port external width" }<td></td><td>{self.cabinet.port_external_width}</td></tr>
-                    <tr>{ "Port minimum diameter" }<td></td><td>{self.cabinet.port_min_diameter()}</td></tr>
-                    <tr>{ "Frequency" }<td></td><td>{self.cabinet.resonant_frequency()}</td></tr>
+                    <tr><td>{ "Port height" }</td><td>
+                        <input
+                            type="text"
+                            value={self.cabinet.port_external_height.to_string()}
+                            onchange={link.batch_callback(|e:Event| { parse_to_message(e, Msg::ChangeHeight) })} /> {" milimetres"}
+                    </td></tr>
+                    <tr><td>{ "Port width" }</td><td>
+                        <input
+                            type="text"
+                            value={self.cabinet.port_external_width.to_string()}
+                            onchange={link.batch_callback(|e:Event| { parse_to_message(e, Msg::ChangeWidth) })} /> {" milimetres"}
+                    </td></tr>
+                    <tr><td>{ "Port flair radius" }</td><td>
+                        <input
+                            type="text"
+                            value={self.cabinet.port_flare_radius.to_string()}
+                            onchange={link.batch_callback(|e:Event| { parse_to_message(e, Msg::ChangeRadius) })} /> {" milimetres"}
+                    </td></tr>
+
+                    <tr><td>{ "Port minimum diameter" }</td><td>{self.cabinet.port_min_diameter()} { " milimeters" }</td></tr>
+                    <tr><td>{ "Frequency" }</td><td>{self.cabinet.resonant_frequency()} { " hertz" }</td></tr>
                 </table>
             </div>
         }
