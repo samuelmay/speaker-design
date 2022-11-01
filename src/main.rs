@@ -41,6 +41,12 @@ impl Cabinet {
         return port_min_radius * 2.0;
     }
     
+    fn nfr_ratio(&self) -> f64 {
+        let L_actual = f64::from(self.port_length)/1000.0;
+        let r_fit = f64::from(self.port_flare_radius)/1000.0;
+        return L_actual/(2.0*r_fit);
+    }
+    
     fn resonant_frequency(&self) -> f64 {
         let L_actual = f64::from(self.port_length)/1000.0;
         let r_fit = f64::from(self.port_flare_radius)/1000.0;
@@ -48,7 +54,7 @@ impl Cabinet {
         
         // special calculation for Jack based on square cross section
         //let A_min = PI*(D_min/2.0).powi(2);
-        let A_min = D_min * f64::from(self.port_external_width);
+        let A_min = D_min * (f64::from(self.port_external_width)/1000.0);
         let L_effective = L_actual + D_min;
 
         let A_effective = A_min * (1.0 + 0.576*(L_actual/(2.0*r_fit)));
@@ -78,10 +84,10 @@ impl Component for App {
     
     fn create(ctx: &Context<Self>) -> Self {
         let default_box = Cabinet {
-            port_length: 250,
-            port_external_width: 250,
-            port_external_height: 150,
-            port_flare_radius: 200,
+            port_length: 120,
+            port_external_width: 100,
+            port_external_height: 92,
+            port_flare_radius: 120,
             box_volume: 161,
         };
         Self {
@@ -137,29 +143,30 @@ impl Component for App {
                         <input
                             type="text"
                             value={self.cabinet.port_length.to_string()}
-                            onchange={link.batch_callback(|e:Event| { parse_to_message(e, Msg::ChangeLength) })} /> {" milimetres"}
+                            onchange={link.batch_callback(|e:Event| { parse_to_message(e, Msg::ChangeLength) })} /> {" millimetres"}
                     </td></tr>
                     <tr><td>{ "Port height" }</td><td>
                         <input
                             type="text"
                             value={self.cabinet.port_external_height.to_string()}
-                            onchange={link.batch_callback(|e:Event| { parse_to_message(e, Msg::ChangeHeight) })} /> {" milimetres"}
+                            onchange={link.batch_callback(|e:Event| { parse_to_message(e, Msg::ChangeHeight) })} /> {" millimetres"}
                     </td></tr>
                     <tr><td>{ "Port width" }</td><td>
                         <input
                             type="text"
                             value={self.cabinet.port_external_width.to_string()}
-                            onchange={link.batch_callback(|e:Event| { parse_to_message(e, Msg::ChangeWidth) })} /> {" milimetres"}
+                            onchange={link.batch_callback(|e:Event| { parse_to_message(e, Msg::ChangeWidth) })} /> {" millimetres"}
                     </td></tr>
                     <tr><td>{ "Port flair radius" }</td><td>
                         <input
                             type="text"
                             value={self.cabinet.port_flare_radius.to_string()}
-                            onchange={link.batch_callback(|e:Event| { parse_to_message(e, Msg::ChangeRadius) })} /> {" milimetres"}
+                            onchange={link.batch_callback(|e:Event| { parse_to_message(e, Msg::ChangeRadius) })} /> {" millimetres"}
                     </td></tr>
 
-                    <tr><td>{ "Port minimum diameter" }</td><td>{self.cabinet.port_min_diameter()} { " milimeters" }</td></tr>
-                    <tr><td>{ "Frequency" }</td><td>{self.cabinet.resonant_frequency()} { " hertz" }</td></tr>
+                    <tr><td>{ "Normalized flair ratio" }</td><td>{self.cabinet.nfr_ratio()} { " (recommended to be 0.5)" }</td></tr>
+                    <tr><td>{ "Port minimum diameter" }</td><td>{self.cabinet.port_min_diameter()} { " millimeters" }</td></tr>
+                    <tr><td>{ "Frequency" }</td><td>{self.cabinet.resonant_frequency()} { " Hertz" }</td></tr>
                 </table>
             </div>
         }
