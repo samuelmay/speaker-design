@@ -1,4 +1,4 @@
-use yew::{Component,NodeRef,Context,Html,html,Properties};
+use yew::{Component,function_component,NodeRef,Context,Html,html,Properties};
 use web_sys::{CanvasRenderingContext2d, HtmlCanvasElement};
 use wasm_bindgen::{JsCast,JsValue};
 use crate::cabinet::{CabinetModel};
@@ -100,3 +100,20 @@ impl Component for FrontView {
     }
 }
 
+#[derive(PartialEq,Properties)]
+pub struct CalculationsProps {
+    pub nfr: f64,
+    pub minimum_diameter: f64,
+    pub frequency: f64,
+}
+
+#[function_component(Calculations)]
+pub fn calculations(props: &CalculationsProps) -> Html {
+    html! {
+        <table>
+            <tr><td>{ "Normalized flair ratio" }</td><td>{ &props.nfr } { " (recommended to be 0.5)" }</td></tr>
+            <tr><td>{ "Port minimum diameter" }</td><td>{ &props.minimum_diameter } { " millimeters" }</td></tr>
+            <tr><td>{ "Frequency" }</td><td>{ &props.frequency } { " Hertz" }</td></tr>
+        </table>
+    }
+}

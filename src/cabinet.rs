@@ -1,6 +1,6 @@
 use std::f64::consts::PI;
 
-#[derive(Clone,Copy)]
+#[derive(Clone, Copy, PartialEq)]
 pub struct CabinetDimensions {
     pub port_length: u32,
     pub port_flare_radius: u32,
