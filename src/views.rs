@@ -11,70 +11,67 @@ pub struct SchematicViewProps {
     pub scale: f64,
 }
 
-pub struct FrontView {
-    node_ref: NodeRef
-} 
-
-impl Component for FrontView {
-    type Message = ();
-    type Properties = SchematicViewProps;
+#[function_component(FrontView)]
+pub fn front_view(props: &SchematicViewProps) -> Html {
+    let border: f64 = 40.0;
+    let canvas_width = format!("{:0}", props.cabinet.port_external_width*props.scale + 2.0*border);
+    let canvas_height = format!("{:0}", props.cabinet.port_external_height*props.scale + 2.0*border);
     
-    fn create(_ctx: &Context<Self>) -> Self {
-        Self {
-           node_ref: NodeRef::default() 
-        }
+    let canvas_ref = use_node_ref();
+
+    {
+        let cabinet = props.cabinet.clone();
+        let canvas = canvas_ref.clone();
+        let scale_factor = props.scale;
+        use_effect(move || {
+            let canvas_element = canvas.cast::<HtmlCanvasElement>().unwrap();
+            let ctx2d : CanvasRenderingContext2d = canvas_element
+                .get_context("2d")
+                .unwrap()
+                .unwrap()
+                .dyn_into()
+                .unwrap();
+            
+            ctx2d.save();
+            ctx2d.translate(border, border).unwrap();
+            ctx2d.scale(scale_factor, scale_factor).unwrap();
+
+            let full_width = f64::from(canvas_element.width());
+            let full_height = f64::from(canvas_element.height());
+            ctx2d.clear_rect(0.0,0.0,full_width, full_height);
+           
+            let min_radius = cabinet.port_min_diameter() / 2.0;
+
+            ctx2d.begin_path();
+            ctx2d.set_stroke_style(&JsValue::from("brown"));
+            ctx2d.move_to(0.0,0.0);
+            ctx2d.line_to(0.0, cabinet.port_external_height);
+            ctx2d.move_to(cabinet.port_external_width, cabinet.port_external_height);
+            ctx2d.line_to(cabinet.port_external_width, 0.0);
+            ctx2d.close_path();
+            ctx2d.stroke();
+
+            ctx2d.set_fill_style(&JsValue::from("brown"));
+            
+            let front_view_box_height = cabinet.port_external_height/2.0-min_radius;
+            ctx2d.fill_rect(0.0, 0.0, cabinet.port_external_width, front_view_box_height);
+            ctx2d.fill_rect(0.0, cabinet.port_external_height - front_view_box_height, cabinet.port_external_width, front_view_box_height);
+
+            let inner_edge_y = (cabinet.port_external_height/2.0) - (cabinet.port_min_diameter() / 2.0);
+            draw_labeled_arrow(&ctx2d,0.0,-10.0,cabinet.port_external_width,0.0);
+            draw_labeled_arrow(&ctx2d,cabinet.port_external_width+10.0,0.0,cabinet.port_external_height,PI/2.0);
+            draw_labeled_arrow(&ctx2d,cabinet.port_external_width/2.0,inner_edge_y,cabinet.port_min_diameter(), PI/2.0);
+
+            || {}
+        });
+
     }
 
-    fn view(&self, ctx: &Context<Self>) -> Html {
-        let cabinet = &ctx.props().cabinet;
-        
-        let canvas_width = format!("{:0}", cabinet.port_external_width + 20.0);
-        let canvas_height = format!("{:0}", cabinet.port_external_height + 20.0);
-
-        html! {
-            <div class={ "speaker-view" }>
-                <h3>{"Front View"}</h3>
-                <canvas ref={self.node_ref.clone()} width={ canvas_width.to_string() } height={canvas_height.to_string()} />
-            </div>
-        }
-    }
-    
-    fn rendered(&mut self, ctx: &Context<Self>, _first_render: bool) {
-        let cabinet = &ctx.props().cabinet;
-        let canvas = self.node_ref.cast::<HtmlCanvasElement>().unwrap(); 
-        let ctx2d : CanvasRenderingContext2d = canvas
-            .get_context("2d")
-            .unwrap()
-            .unwrap()
-            .dyn_into()
-            .unwrap();
-        
-        let full_width = f64::from(canvas.width());
-        let full_height = f64::from(canvas.height());
-        ctx2d.clear_rect(0.0,0.0,full_width, full_height);
-        let border: f64 = 10.0;
-        
-        let scale_factor: f64 = 1.0;
-       
-        let port_height_scaled = cabinet.port_external_height / scale_factor;
-        let port_width_scaled = cabinet.port_external_width / scale_factor;
-        let min_radius_scaled = cabinet.port_min_diameter() / (2.0*scale_factor);
-
-        ctx2d.begin_path();
-        ctx2d.set_stroke_style(&JsValue::from("brown"));
-        ctx2d.move_to(border, border);
-        ctx2d.line_to(border, border + port_height_scaled);
-        ctx2d.move_to(border + port_width_scaled, border + port_height_scaled);
-        ctx2d.line_to(border + port_width_scaled, border);
-        ctx2d.close_path();
-        ctx2d.stroke();
-
-        ctx2d.set_fill_style(&JsValue::from("brown"));
-        
-        let front_view_box_height = port_height_scaled/2.0-min_radius_scaled;
-        ctx2d.fill_rect(border, border, port_width_scaled, front_view_box_height);
-        ctx2d.fill_rect(border, border + port_height_scaled - front_view_box_height, port_width_scaled, front_view_box_height);
-       
+    html! {
+        <div class={ "speaker-view" }>
+            <h3>{"Front View"}</h3>
+            <canvas ref={canvas_ref} width={ canvas_width.to_string() } height={canvas_height.to_string()} />
+        </div>
     }
 }
 

@@ -27,9 +27,9 @@ header h1 {
     align-items: center;
 }
 
-canvas {
+/*canvas {
     border: 1px solid grey;
-}
+}*/
 .speaker-info {
     margin: 1em;
     padding: 1em;
