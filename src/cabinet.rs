@@ -9,7 +9,7 @@ pub struct CabinetDimensions {
     pub box_volume: u32,
 }
 
-#[derive(Clone, Debug, PartialEq)]
+#[derive(Clone, Copy, PartialEq)]
 pub struct CabinetModel {
     pub port_length: f64,
     pub port_flare_radius: f64,
