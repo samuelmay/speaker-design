@@ -1,0 +1,33 @@
+body {
+    font-family: montserrat,sans-serif;
+    margin: 0px;
+}
+
+header {
+    background-color: #ffcc88;
+    text-align: center;
+    padding: 1em;
+    box-shadow: 0 0.25rem 0.25rem rgba(0, 0, 0, 0.14);
+}
+
+header h1 {
+    margin: 0px;
+}
+
+#app-container {
+    display: grid;
+    grid-template-columns: 50% 50%;
+    grid-template-rows: 50% 50%;
+    padding: 1em;
+}
+
+.speaker-view {
+    grid-column: span 2;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+}
+
+.speaker-info {
+    margin: 2em;
+}

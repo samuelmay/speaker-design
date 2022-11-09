@@ -53,11 +53,14 @@ impl Component for App {
         let on_change = ctx.link().callback(DimensionsMsg::Change);
         
         html! {
-            <div>
-                <FrontView cabinet={model} />
-                <DimensionsForm starting_dimensions={self.cabinet} {on_change} />
-                <Calculations {nfr} {minimum_diameter} {frequency} />
-            </div>
+            <>
+                <header><h1>{ "Speaker Port Design App" }</h1></header>
+                <div id={ "app-container" }>
+                    <FrontView cabinet={model} />
+                    <DimensionsForm starting_dimensions={self.cabinet} {on_change} />
+                    <Calculations {nfr} {minimum_diameter} {frequency} />
+                </div>
+            </>
         }
     }
 }

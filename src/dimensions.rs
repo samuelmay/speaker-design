@@ -76,6 +76,8 @@ impl Component for DimensionsForm {
         let link = ctx.link();
 
         html! {
+        <div class={ "speaker-info" }>
+            <h3>{ "Dimensions" }</h3>
             <table>
                 <tr><td>{ "Box volume" }</td><td>
                     <input
@@ -108,6 +110,7 @@ impl Component for DimensionsForm {
                         onchange={link.batch_callback(|e:Event| { parse_to_message(e, FormMsg::ChangeRadius) })} /> {" millimetres"}
                 </td></tr>
             </table>
+        </div>
         }
     }
 }

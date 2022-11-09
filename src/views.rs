@@ -29,7 +29,10 @@ impl Component for FrontView {
         let canvas_height = format!("{:0}", cabinet.port_external_height + 20.0);
 
         html! {
-            <canvas ref={self.node_ref.clone()} width={ canvas_width.to_string() } height={canvas_height.to_string()} />
+            <div class={ "speaker-view" }>
+                <h3>{"Front View"}</h3>
+                <canvas ref={self.node_ref.clone()} width={ canvas_width.to_string() } height={canvas_height.to_string()} />
+            </div>
         }
     }
     
@@ -110,10 +113,13 @@ pub struct CalculationsProps {
 #[function_component(Calculations)]
 pub fn calculations(props: &CalculationsProps) -> Html {
     html! {
-        <table>
-            <tr><td>{ "Normalized flair ratio" }</td><td>{ &props.nfr } { " (recommended to be 0.5)" }</td></tr>
-            <tr><td>{ "Port minimum diameter" }</td><td>{ &props.minimum_diameter } { " millimeters" }</td></tr>
-            <tr><td>{ "Frequency" }</td><td>{ &props.frequency } { " Hertz" }</td></tr>
-        </table>
+        <div class={ "speaker-info" }>
+            <h3>{"Calculated Parameters"}</h3>
+            <table>
+                <tr><td>{ "Normalized flair ratio" }</td><td>{ &props.nfr } { " (recommended to be 0.5)" }</td></tr>
+                <tr><td>{ "Port minimum diameter" }</td><td>{ &props.minimum_diameter } { " millimeters" }</td></tr>
+                <tr><td>{ "Frequency" }</td><td>{ &props.frequency } { " Hertz" }</td></tr>
+            </table>
+        </div>
     }
 }
