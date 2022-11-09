@@ -56,8 +56,8 @@ impl Component for App {
             <>
                 <header><h1>{ "Speaker Port Design App" }</h1></header>
                 <div id={ "app-container" }>
-                    <SideView cabinet={model} />
-                    <FrontView cabinet={model} />
+                    <SideView cabinet={model} scale={1.5}/>
+                    <FrontView cabinet={model} scale={1.0}/>
                     <DimensionsForm starting_dimensions={self.cabinet} {on_change} />
                     <Calculations {nfr} {minimum_diameter} {frequency} />
                 </div>
