@@ -39,7 +39,7 @@ pub fn front_view(props: &SchematicViewProps) -> Html {
             let full_width = f64::from(canvas_element.width());
             let full_height = f64::from(canvas_element.height());
             ctx2d.clear_rect(0.0,0.0,full_width, full_height);
-           
+
             let min_radius = cabinet.port_min_diameter() / 2.0;
 
             ctx2d.begin_path();
@@ -61,6 +61,8 @@ pub fn front_view(props: &SchematicViewProps) -> Html {
             draw_labeled_arrow(&ctx2d,0.0,-10.0,cabinet.port_external_width,0.0);
             draw_labeled_arrow(&ctx2d,cabinet.port_external_width+10.0,0.0,cabinet.port_external_height,PI/2.0);
             draw_labeled_arrow(&ctx2d,cabinet.port_external_width/2.0,inner_edge_y,cabinet.port_min_diameter(), PI/2.0);
+            
+            ctx2d.restore();
 
             || {}
         });
@@ -219,13 +221,16 @@ pub struct CalculationsProps {
 
 #[function_component(Calculations)]
 pub fn calculations(props: &CalculationsProps) -> Html {
+    let nfr = format!("{:.2}",props.nfr);
+    let minimum_diameter = format!("{:.2} millimeters",props.minimum_diameter);
+    let frequency = format!("{:.2} Hertz",props.frequency);
     html! {
         <div class={ "speaker-info" }>
             <h3>{"Calculated Parameters"}</h3>
             <table>
-                <tr><td>{ "Normalized flair ratio" }</td><td>{ &props.nfr } { " (recommended to be 0.5)" }</td></tr>
-                <tr><td>{ "Port minimum diameter" }</td><td>{ &props.minimum_diameter } { " millimeters" }</td></tr>
-                <tr><td>{ "Frequency" }</td><td>{ &props.frequency } { " Hertz" }</td></tr>
+                <tr><td>{ "Normalized flair ratio" }</td><td>{ nfr } { " (recommended to be 0.5)" }</td></tr>
+                <tr><td>{ "Port minimum diameter" }</td><td>{ minimum_diameter }</td></tr>
+                <tr><td>{ "Frequency" }</td><td>{ frequency}</td></tr>
             </table>
         </div>
     }
